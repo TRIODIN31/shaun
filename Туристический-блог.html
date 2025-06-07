@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nomad Notes - Записки кочевника</title>
+    <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+    <script>tailwind.config={theme:{extend:{colors:{primary:'#FF7700',secondary:'#FF5500'},borderRadius:{'none':'0px','sm':'4px',DEFAULT:'8px','md':'12px','lg':'16px','xl':'20px','2xl':'24px','3xl':'32px','full':'9999px','button':'8px'}}}}</script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Roboto:wght@300;400;500;700&family=Pacifico&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css">
+    <style>
+        :where([class^="ri-"])::before { content: "\f3c2"; }
+        
+        body {
+            background-color: #000000;
+            color: #CCCCCC;
+            font-family: 'Roboto', sans-serif;
+            line-height: 1.6;
+        }
+        
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Oswald', sans-serif;
+            color: #FFFFFF;
+            text-shadow: 1px 1px 3px rgba(255,119,0,0.3);
+        }
+        
+        .nav-link {
+            position: relative;
+            transition: color 0.3s;
+        }
+        
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -2px;
+            left: 0;
+            background-color: #FF7700;
+            transition: width 0.3s;
+        }
+        
+        .nav-link:hover::after {
+            width: 100%;
+        }
+        
+        .hero {
+            background-image: linear-gradient(to bottom, rgba(0,0,0,0.6), rgba(0,0,0,0.8)), url('https://readdy.ai/api/search-image?query=dramatic%20mountain%20landscape%20with%20desert%20at%20sunset%2C%20high%20contrast%2C%20dark%20rocks%20against%20orange%20sky%2C%20cinematic%20view%2C%20professional%20photography%2C%208k%20resolution%2C%20no%20people&width=1920&height=1080&seq=hero123&orientation=landscape');
+            background-attachment: fixed;
+            background-position: center;
+            background-size: cover;
+        }
+        
+        .tag {
+            background-color: #FF5500;
+            color: #000000;
+            border-radius: 20px;
+            padding: 2px 10px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        
+        .post-card {
+            transition: all 0.3s;
+            background-color: #111111;
+        }
+        
+        .post-card:hover {
+            box-shadow: 0 0 15px rgba(255,119,0,0.7);
+            transform: translateY(-5px);
+        }
+        
+        .gallery-item {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .gallery-item::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.4);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .gallery-item:hover::after {
+            opacity: 1;
+        }
+        
+        .gallery-item:hover {
+            box-shadow: 0 0 0 3px #FF7700;
+        }
+        
+        .filter-btn {
+            transition: all 0.3s;
+        }
+        
+        .filter-btn.active {
+            background-color: #FF7700;
+            color: #000000;
+        }
+        
+        input[type="email"] {
+            background-color: #111111;
+            border: 1px solid #333333;
+            color: #FFFFFF;
+        }
+        
+        input[type="email"]::placeholder {
+            color: #888888;
+        }
+        
+        button {
+            background: #FF7700;
+            color: #000000;
+            border: none;
+            transition: all 0.3s;
+        }
+        
+        button:hover {
+            background: #FF9900;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(255,119,0,0.4);
+        }
+        
+        .subscribe-btn {
+            background: linear-gradient(to right, #FF5500, #FF9900);
+        }
+        
+        .social-icon {
+            color: #FFFFFF;
+            transition: color 0.3s;
+        }
+        
+        .social-icon:hover {
+            color: #FF7700;
+        }
+        
+        .masonry-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            grid-auto-rows: 10px;
+            grid-gap: 16px;
+        }
+        
+        @media (max-width: 1200px) {
+            .posts-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .posts-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="fixed w-full bg-black bg-opacity-90 z-50">
+        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+            <a href="#" class="text-primary text-3xl font-['Pacifico']">Nomad Notes</a>
+            
+            <nav class="hidden md:flex space-x-8">
+                <a href="#about" class="nav-link text-white hover:text-primary">Обо мне</a>
+                <a href="#posts" class="nav-link text-white hover:text-primary">Блог</a>
+                <a href="#gallery" class="nav-link text-white hover:text-primary">Галерея</a>
+                <a href="#contact" class="nav-link text-white hover:text-primary">Контакты</a>
+            </nav>
+            
+            <div class="md:hidden w-8 h-8 flex items-center justify-center">
+                <i class="ri-menu-line text-white ri-lg" id="mobile-menu-btn"></i>
+            </div>
+        </div>
+        
+        <div id="mobile-menu" class="hidden md:hidden bg-[#111111] w-full">
+            <div class="container mx-auto px-4 py-4 flex flex-col space-y-4">
+                <a href="#about" class="text-white hover:text-primary py-2">Обо мне</a>
+                <a href="#posts" class="text-white hover:text-primary py-2">Блог</a>
+                <a href="#gallery" class="text-white hover:text-primary py-2">Галерея</a>
+                <a href="#contact" class="text-white hover:text-primary py-2">Контакты</a>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section id="hero" class="hero h-screen flex items-center">
+            <div class="container mx-auto px-4 text-center">
+                <h1 class="text-5xl md:text-7xl mb-6">Записки кочевника</h1>
+                <p class="text-xl md:text-2xl text-white mb-10">Открываю мир один шаг за раз</p>
+                <button class="px-8 py-4 text-lg font-bold !rounded-button shadow-lg">Читать дневник</button>
+            </div>
+        </section>
+
+        <section id="about" class="py-20">
+            <div class="container mx-auto px-4">
+                <div class="flex flex-col md:flex-row items-center gap-12">
+                    <div class="w-full md:w-1/2">
+                        <h2 class="text-4xl mb-6">О блоге</h2>
+                        <p class="mb-4">Привет! Меня зовут Алексей Воронин, и я профессиональный путешественник с опытом более 10 лет. Я побывал в 47 странах на 5 континентах, от заснеженных вершин Гималаев до раскаленных песков Сахары.</p>
+                        <p class="mb-4">В своем блоге я делюсь не только красивыми фотографиями, но и практическими советами для тех, кто хочет выйти за рамки обычного туризма и погрузиться в настоящие приключения.</p>
+                        <p class="mb-6">Моя философия проста: мир слишком велик, чтобы оставаться на одном месте. Присоединяйтесь к моему путешествию!</p>
+                        <div class="flex space-x-4">
+                            <div class="flex items-center">
+                                <div class="w-6 h-6 flex items-center justify-center text-primary mr-2">
+                                    <i class="ri-map-pin-line"></i>
+                                </div>
+                                <span>47 стран</span>
+                            </div>
+                            <div class="flex items-center">
+                                <div class="w-6 h-6 flex items-center justify-center text-primary mr-2">
+                                    <i class="ri-camera-line"></i>
+                                </div>
+                                <span>10,000+ фото</span>
+                            </div>
+                            <div class="flex items-center">
+                                <div class="w-6 h-6 flex items-center justify-center text-primary mr-2">
+                                    <i class="ri-footprint-line"></i>
+                                </div>
+                                <span>250+ маршрутов</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="w-full md:w-1/2">
+                        <img src="https://readdy.ai/api/search-image?query=portrait%20of%20a%20male%20traveler%20with%20backpack%20in%20mountains%2C%20dramatic%20lighting%2C%20professional%20photography%2C%20cinematic%2C%20high%20contrast%2C%20rugged%20look%2C%20adventure%20lifestyle&width=600&height=800&seq=about123&orientation=portrait" alt="Путешественник" class="w-full h-auto object-cover shadow-lg">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="posts" class="py-20 bg-[#0A0A0A]">
+            <div class="container mx-auto px-4">
+                <h2 class="text-4xl mb-12 text-center">Последние записи</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 posts-grid">
+                    <article class="post-card overflow-hidden">
+                        <div class="h-64 overflow-hidden">
+                            <img src="https://readdy.ai/api/search-image?query=atlas%20mountains%20morocco%2C%20dramatic%20landscape%2C%20high%20contrast%20photography%2C%20orange%20sunset%2C%20rocky%20terrain%2C%20cinematic%20view%2C%20professional%20travel%20photography&width=600&height=400&seq=post1&orientation=landscape" alt="Марокко" class="w-full h-full object-cover">
+                        </div>
+                        <div class="p-6">
+                            <span class="tag inline-block mb-3">#горы</span>
+                            <h3 class="text-2xl mb-3">Переход через Атласские горы</h3>
+                            <p class="mb-4">Как мы потеряли навигатор и нашли себя в древних деревнях берберов, где время остановилось несколько веков назад...</p>
+                            <a href="#" class="text-primary flex items-center">
+                                Читать 
+                                <div class="w-5 h-5 flex items-center justify-center ml-1">
+                                    <i class="ri-arrow-right-line"></i>
+                                </div>
+                            </a>
+                        </div>
+                    </article>
+                    
+                    <article class="post-card overflow-hidden">
+                        <div class="h-64 overflow-hidden">
+                            <img src="https://readdy.ai/api/search-image?query=northern%20lights%20over%20iceland%2C%20dramatic%20night%20sky%2C%20green%20aurora%20borealis%2C%20silhouette%20of%20mountains%2C%20professional%20night%20photography%2C%20stars%2C%20cinematic%20view&width=600&height=400&seq=post2&orientation=landscape" alt="Исландия" class="w-full h-full object-cover">
+                        </div>
+                        <div class="p-6">
+                            <span class="tag inline-block mb-3">#северное_сияние</span>
+                            <h3 class="text-2xl mb-3">Охота за северным сиянием в Исландии</h3>
+                            <p class="mb-4">Три ночи в палатке при -15°C, замерзшая камера и самое невероятное зрелище, которое я когда-либо видел...</p>
+                            <a href="#" class="text-primary flex items-center">
+                                Читать 
+                                <div class="w-5 h-5 flex items-center justify-center ml-1">
+                                    <i class="ri-arrow-right-line"></i>
+                                </div>
+                            </a>
+                        </div>
+                    </article>
+                    
+                    <article class="post-card overflow-hidden">
+                        <div class="h-64 overflow-hidden">
+                            <img src="https://readdy.ai/api/search-image?query=amazon%20rainforest%2C%20dense%20jungle%2C%20river%20view%2C%20dramatic%20lighting%20through%20canopy%2C%20high%20contrast%2C%20professional%20travel%20photography%2C%20adventure%20scene&width=600&height=400&seq=post3&orientation=landscape" alt="Амазонка" class="w-full h-full object-cover">
+                        </div>
+                        <div class="p-6">
+                            <span class="tag inline-block mb-3">#джунгли</span>
+                            <h3 class="text-2xl mb-3">Две недели в сердце Амазонии</h3>
+                            <p class="mb-4">Путешествие по реке с местными проводниками, ночевки в хижинах на деревьях и встречи с редкими видами животных...</p>
+                            <a href="#" class="text-primary flex items-center">
+                                Читать 
+                                <div class="w-5 h-5 flex items-center justify-center ml-1">
+                                    <i class="ri-arrow-right-line"></i>
+                                </div>
+                            </a>
+                        </div>
+                    </article>
+                    
+                    <article class="post-card overflow-hidden">
+                        <div class="h-64 overflow-hidden">
+                            <img src="https://readdy.ai/api/search-image?query=sahara%20desert%20sand%20dunes%20at%20sunset%2C%20dramatic%20orange%20sky%2C%20silhouette%20of%20camel%20caravan%2C%20high%20contrast%2C%20cinematic%20view%2C%20professional%20travel%20photography&width=600&height=400&seq=post4&orientation=landscape" alt="Сахара" class="w-full h-full object-cover">
+                        </div>
+                        <div class="p-6">
+                            <span class="tag inline-block mb-3">#пустыня</span>
+                            <h3 class="text-2xl mb-3">Ночь под звездами Сахары</h3>
+                            <p class="mb-4">Караван верблюдов, бесконечные дюны и самое чистое звездное небо, которое только можно представить...</p>
+                            <a href="#" class="text-primary flex items-center">
+                                Читать 
+                                <div class="w-5 h-5 flex items-center justify-center ml-1">
+                                    <i class="ri-arrow-right-line"></i>
+                                </div>
+                            </a>
+                        </div>
+                    </article>
+                    
+                    <article class="post-card overflow-hidden">
+                        <div class="h-64 overflow-hidden">
+                            <img src="https://readdy.ai/api/search-image?query=himalayan%20mountains%2C%20snow%20peaks%2C%20dramatic%20clouds%2C%20trekking%20path%2C%20high%20contrast%2C%20cinematic%20view%2C%20professional%20travel%20photography%2C%20adventure%20scene&width=600&height=400&seq=post5&orientation=landscape" alt="Гималаи" class="w-full h-full object-cover">
+                        </div>
+                        <div class="p-6">
+                            <span class="tag inline-block mb-3">#треккинг</span>
+                            <h3 class="text-2xl mb-3">Базовый лагерь Эвереста: путь наверх</h3>
+                            <p class="mb-4">Две недели треккинга, горная болезнь и невероятные пейзажи на крыше мира. Стоило ли оно того?</p>
+                            <a href="#" class="text-primary flex items-center">
+                                Читать 
+                                <div class="w-5 h-5 flex items-center justify-center ml-1">
+                                    <i class="ri-arrow-right-line"></i>
+                                </div>
+                            </a>
+                        </div>
+                    </article>
+                    
+                    <article class="post-card overflow-hidden">
+                        <div class="h-64 overflow-hidden">
+                            <img src="https://readdy.ai/api/search-image?query=bali%20rice%20terraces%20at%20sunset%2C%20dramatic%20lighting%2C%20silhouette%20of%20palm%20trees%2C%20high%20contrast%2C%20cinematic%20view%2C%20professional%20travel%20photography&width=600&height=400&seq=post6&orientation=landscape" alt="Бали" class="w-full h-full object-cover">
+                        </div>
+                        <div class="p-6">
+                            <span class="tag inline-block mb-3">#острова</span>
+                            <h3 class="text-2xl mb-3">Затерянные храмы Бали</h3>
+                            <p class="mb-4">Месяц на мотоцикле по острову богов, секретные места и ритуалы, о которых не пишут в путеводителях...</p>
+                            <a href="#" class="text-primary flex items-center">
+                                Читать 
+                                <div class="w-5 h-5 flex items-center justify-center ml-1">
+                                    <i class="ri-arrow-right-line"></i>
+                                </div>
+                            </a>
+                        </div>
+                    </article>
+                </div>
+                
+                <div class="text-center mt-12">
+                    <button class="px-8 py-4 !rounded-button">Все записи</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="gallery" class="py-20">
+            <div class="container mx-auto px-4">
+                <h2 class="text-4xl mb-12 text-center">Фотогалерея</h2>
+                
+                <div class="flex justify-center mb-10">
+                    <div class="inline-flex bg-[#111111] p-1 !rounded-full">
+                        <button class="filter-btn px-6 py-2 !rounded-full active whitespace-nowrap" data-filter="all">Все фото</button>
+                        <button class="filter-btn px-6 py-2 !rounded-full whitespace-nowrap" data-filter="mountains">Горы</button>
+                        <button class="filter-btn px-6 py-2 !rounded-full whitespace-nowrap" data-filter="desert">Пустыни</button>
+                        <button class="filter-btn px-6 py-2 !rounded-full whitespace-nowrap" data-filter="forest">Леса</button>
+                        <button class="filter-btn px-6 py-2 !rounded-full whitespace-nowrap" data-filter="ocean">Океаны</button>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="gallery-grid">
+                    <div class="gallery-item" data-category="mountains">
+                        <img src="https://readdy.ai/api/search-image?query=dramatic%20mountain%20peaks%20at%20sunset%2C%20high%20contrast%2C%20silhouette%2C%20orange%20sky%2C%20professional%20photography%2C%20cinematic%20view&width=600&height=400&seq=gal1&orientation=landscape" alt="Горы" class="w-full h-auto">
+                    </div>
+                    <div class="gallery-item" data-category="desert">
+                        <img src="https://readdy.ai/api/search-image?query=sahara%20desert%20sand%20dunes%2C%20dramatic%20lighting%2C%20golden%20hour%2C%20shadows%2C%20professional%20photography%2C%20cinematic%20view&width=400&height=600&seq=gal2&orientation=portrait" alt="Пустыня" class="w-full h-auto">
+                    </div>
+                    <div class="gallery-item" data-category="ocean">
+                        <img src="https://readdy.ai/api/search-image?query=dramatic%20ocean%20cliff%20coast%20at%20sunset%2C%20waves%20crashing%2C%20high%20contrast%2C%20professional%20photography%2C%20cinematic%20view&width=600&height=400&seq=gal3&orientation=landscape" alt="Океан" class="w-full h-auto">
+                    </div>
+                    <div class="gallery-item" data-category="mountains">
+                        <img src="https://readdy.ai/api/search-image?query=snow%20capped%20mountain%20peaks%2C%20dramatic%20clouds%2C%20high%20contrast%2C%20professional%20photography%2C%20cinematic%20view&width=400&height=600&seq=gal4&orientation=portrait" alt="Горы" class="w-full h-auto">
+                    </div>
+                    <div class="gallery-item" data-category="forest">
+                        <img src="https://readdy.ai/api/search-image?query=misty%20forest%20at%20dawn%2C%20sun%20rays%20through%20trees%2C%20dramatic%20lighting%2C%20high%20contrast%2C%20professional%20photography%2C%20cinematic%20view&width=600&height=400&seq=gal5&orientation=landscape" alt="Лес" class="w-full h-auto">
+                    </div>
+                    <div class="gallery-item" data-category="desert">
+                        <img src="https://readdy.ai/api/search-image?query=desert%20canyon%20with%20dramatic%20rock%20formations%2C%20high%20contrast%2C%20golden%20hour%2C%20professional%20photography%2C%20cinematic%20view&width=600&height=400&seq=gal6&orientation=landscape" alt="Каньон" class="w-full h-auto">
+                    </div>
+                    <div class="gallery-item" data-category="ocean">
+                        <img src="https://readdy.ai/api/search-image?query=tropical%20island%20beach%20from%20above%2C%20turquoise%20water%2C%20white%20sand%2C%20dramatic%20lighting%2C%20professional%20photography%2C%20cinematic%20view&width=600&height=400&seq=gal7&orientation=landscape" alt="Пляж" class="w-full h-auto">
+                    </div>
+                    <div class="gallery-item" data-category="forest">
+                        <img src="https://readdy.ai/api/search-image?query=autumn%20forest%20with%20colorful%20leaves%2C%20dramatic%20lighting%2C%20fog%2C%20high%20contrast%2C%20professional%20photography%2C%20cinematic%20view&width=400&height=600&seq=gal8&orientation=portrait" alt="Осенний лес" class="w-full h-auto">
+                    </div>
+                    <div class="gallery-item" data-category="mountains">
+                        <img src="https://readdy.ai/api/search-image?query=mountain%20lake%20reflection%20at%20sunset%2C%20dramatic%20sky%2C%20high%20contrast%2C%20professional%20photography%2C%20cinematic%20view&width=600&height=400&seq=gal9&orientation=landscape" alt="Горное озеро" class="w-full h-auto">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="contact" class="py-20 bg-[#0A0A0A]">
+            <div class="container mx-auto px-4">
+                <div class="max-w-2xl mx-auto text-center">
+                    <h2 class="text-4xl mb-6">Присоединяйтесь к путешествию</h2>
+                    <p class="mb-10">Подпишитесь на мою рассылку и получайте эксклюзивные истории, советы и маршруты прямо на вашу почту</p>
+                    
+                    <form class="flex flex-col md:flex-row gap-4 mb-12">
+                        <input type="email" placeholder="Ваш email" class="flex-grow px-6 py-4 !rounded-button border-none focus:ring-2 focus:ring-primary outline-none text-sm">
+                        <button class="subscribe-btn px-8 py-4 !rounded-button whitespace-nowrap">Отправиться в путь →</button>
+                    </form>
+                    
+                    <div class="flex justify-center space-x-8">
+                        <a href="#" class="social-icon w-12 h-12 flex items-center justify-center">
+                            <i class="ri-instagram-line ri-xl"></i>
+                        </a>
+                        <a href="#" class="social-icon w-12 h-12 flex items-center justify-center">
+                            <i class="ri-youtube-line ri-xl"></i>
+                        </a>
+                        <a href="#" class="social-icon w-12 h-12 flex items-center justify-center">
+                            <i class="ri-telegram-line ri-xl"></i>
+                        </a>
+                        <a href="#" class="social-icon w-12 h-12 flex items-center justify-center">
+                            <i class="ri-vk-line ri-xl"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="py-10 bg-black">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <a href="#" class="text-primary text-2xl font-['Pacifico'] mb-6 md:mb-0">Nomad Notes</a>
+                
+                <div class="flex flex-wrap justify-center gap-x-8 gap-y-4 mb-6 md:mb-0">
+                    <a href="#" class="text-white hover:text-primary">О блоге</a>
+                    <a href="#" class="text-white hover:text-primary">Карта путешествий</a>
+                    <a href="#" class="text-white hover:text-primary">Снаряжение</a>
+                    <a href="#" class="text-white hover:text-primary">Контакты</a>
+                </div>
+                
+                <p class="text-sm text-gray-500">© 2025 Nomad Notes. Все права защищены.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script id="mobile-menu-script">
+        document.addEventListener('DOMContentLoaded', function() {
+            const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+            const mobileMenu = document.getElementById('mobile-menu');
+            
+            mobileMenuBtn.addEventListener('click', function() {
+                if (mobileMenu.classList.contains('hidden')) {
+                    mobileMenu.classList.remove('hidden');
+                    mobileMenuBtn.classList.remove('ri-menu-line');
+                    mobileMenuBtn.classList.add('ri-close-line');
+                } else {
+                    mobileMenu.classList.add('hidden');
+                    mobileMenuBtn.classList.remove('ri-close-line');
+                    mobileMenuBtn.classList.add('ri-menu-line');
+                }
+            });
+            
+            const mobileLinks = mobileMenu.querySelectorAll('a');
+            mobileLinks.forEach(link => {
+                link.addEventListener('click', function() {
+                    mobileMenu.classList.add('hidden');
+                    mobileMenuBtn.classList.remove('ri-close-line');
+                    mobileMenuBtn.classList.add('ri-menu-line');
+                });
+            });
+        });
+    </script>
+
+    <script id="gallery-filter-script">
+        document.addEventListener('DOMContentLoaded', function() {
+            const filterBtns = document.querySelectorAll('.filter-btn');
+            const galleryItems = document.querySelectorAll('.gallery-item');
+            
+            filterBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    // Remove active class from all buttons
+                    filterBtns.forEach(b => b.classList.remove('active'));
+                    
+                    // Add active class to clicked button
+                    this.classList.add('active');
+                    
+                    const filter = this.getAttribute('data-filter');
+                    
+                    galleryItems.forEach(item => {
+                        if (filter === 'all' || item.getAttribute('data-category') === filter) {
+                            item.style.display = 'block';
+                        } else {
+                            item.style.display = 'none';
+                        }
+                    });
+                });
+            });
+        });
+    </script>
+
+    <script id="scroll-animation-script">
+        document.addEventListener('DOMContentLoaded', function() {
+            const navLinks = document.querySelectorAll('.nav-link');
+            
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    const targetId = this.getAttribute('href');
+                    const targetSection = document.querySelector(targetId);
+                    
+                    window.scrollTo({
+                        top: targetSection.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                });
+            });
+        });
+    </script>
+</body>
+</html>
